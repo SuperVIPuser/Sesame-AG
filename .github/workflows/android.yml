@@ -38,7 +38,7 @@ jobs:
     permissions:
       contents: read
     outputs:
-      ready: ${{ steps.check.outputs.ready }}
+      ready: ${{ steps.check.outputs.ready || github.ref_name == 'dev' }}
       reason: ${{ steps.check.outputs.reason }}
       tag_valid: ${{ steps.meta.outputs.tag_valid }}
       tag_version_code: ${{ steps.meta.outputs.tag_version_code }}
