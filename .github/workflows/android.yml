@@ -35,13 +35,25 @@ env:
   TARGET_SOURCE_BRANCH: dev
   TARGET_MODULE_REPO: Xposed-Modules-Repo/io.github.aoguai.sesameag
   PUBLISH_TO_XPOSED_REPO: "false"
-
 concurrency:
   group: release-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   preflight:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+      reason: ${{ steps.check.outputs.reason }}
+      tag_valid: ${{ steps.meta.outputs.tag_valid }}
+      tag_version_code: ${{ steps.meta.outputs.tag_version_code }}
+      configured_version_name: ${{ steps.meta.outputs.configured_version_name }}
+      version_name: ${{ steps.meta.outputs.version_name }}
+      version_code: ${{ steps.meta.outputs.version_code }}
+      xposed_tag: ${{ steps.meta.outputs.xposed_tag }}
+
     runs-on: ubuntu-latest
     permissions:
       contents: read
