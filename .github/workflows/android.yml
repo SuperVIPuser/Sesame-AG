@@ -233,6 +233,9 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.ref }}
+          persist-credentials: true
+          token: ${{ secrets.GITHUB_TOKEN }}
+          submodules: true
 
       - name: Set up JDK
         uses: actions/setup-java@v5
