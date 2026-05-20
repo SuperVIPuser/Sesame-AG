@@ -2,14 +2,11 @@ name: Release Build
 run-name: Release Build - ${{ github.ref_name }}
 
 on:
-  # 保留作者原有的Tag触发规则
   push:
     tags:
       - "[0-9]*-*"
-    # 新增：推送到dev分支时自动触发构建
     branches:
       - dev
-  # 新增：保留手动触发入口（和你之前的修改兼容）
   workflow_dispatch:
     inputs:
       build_type:
@@ -73,7 +70,7 @@ jobs:
     ref: ${{ github.ref }}
     persist-credentials: true
     token: ${{ secrets.GITHUB_TOKEN }}
-    submodules: true # 拉取所有子模块，避免依赖缺失
+    submodules: true 
 
 
 
