@@ -8,15 +8,7 @@ on:
     branches:
       - dev
   workflow_dispatch:
-    inputs:
-      build_type:
-        description: '构建类型'
-        required: false
-        default: 'release'
-        type: choice
-        options:
-          - release
-          - debug
+
 
 env:
   CI: "true"
@@ -35,25 +27,13 @@ env:
   TARGET_SOURCE_BRANCH: dev
   TARGET_MODULE_REPO: Xposed-Modules-Repo/io.github.aoguai.sesameag
   PUBLISH_TO_XPOSED_REPO: "false"
+
 concurrency:
   group: release-${{ github.ref_name }}
   cancel-in-progress: false
 
 jobs:
   preflight:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-    outputs:
-      ready: ${{ steps.check.outputs.ready }}
-      reason: ${{ steps.check.outputs.reason }}
-      tag_valid: ${{ steps.meta.outputs.tag_valid }}
-      tag_version_code: ${{ steps.meta.outputs.tag_version_code }}
-      configured_version_name: ${{ steps.meta.outputs.configured_version_name }}
-      version_name: ${{ steps.meta.outputs.version_name }}
-      version_code: ${{ steps.meta.outputs.version_code }}
-      xposed_tag: ${{ steps.meta.outputs.xposed_tag }}
-
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -75,16 +55,11 @@ jobs:
           sudo timedatectl set-timezone Asia/Shanghai
           echo "Current time: $(date)"
 
-   - name: Checkout
-  uses: actions/checkout@v4
-  with:
-    fetch-depth: 0
-    ref: ${{ github.ref }}
-    persist-credentials: true
-    token: ${{ secrets.GITHUB_TOKEN }}
-    submodules: true 
-
-
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.ref }}
 
       - name: Validate Project Toolchain Baseline
         shell: bash
@@ -561,72 +536,4 @@ jobs:
               echo
 
               if [[ -n "${contributor_html}" ]]; then
-                echo "<p>${contributor_html}</p>"
-                echo
-              fi
-
-              joined_contributors=""
-              for contributor_name in "${contributor_names[@]}"; do
-                if [[ -n "${joined_contributors}" ]]; then
-                  joined_contributors+="、"
-                fi
-                joined_contributors+="${contributor_name}"
-              done
-              echo "感谢以下参与本轮更新提交的开发者：${joined_contributors}"
-              echo
-            fi
-
-            echo "## Full Changelog"
-            echo
-            if [[ -n "${compare_url}" ]]; then
-              echo "- 对比视图：${compare_url}"
-            fi
-            echo "- 提交历史：${commit_history_url}"
-            echo
-
-            echo "> ## 下载说明"
-            echo "<b>- arm64-v8a:</b> 适用于64位 ARM 设备 (主流新手机)"
-            echo "<b>- armeabi-v7a:</b> 适用于32位 ARM 设备 (旧款手机)"
-            echo "<b>- x86 / x86_64:</b> 主要用于 PC 上的安卓模拟器"
-            echo "<b>- universal:</b> 通用版 (不确定时使用，体积较大)"
-            echo ">"
-            echo "> **如果不确定，请下载 \`universal\` 版本。**"
-          } > "${body_path}"
-
-          echo "body_path=${body_path}" >> "$GITHUB_OUTPUT"
-
-      - name: Sync Release to Target Repository
-        if: env.PUBLISH_TO_XPOSED_REPO == 'true'
-        uses: softprops/action-gh-release@v2
-        with:
-          repository: ${{ env.TARGET_MODULE_REPO }}
-          name: ${{ needs.preflight.outputs.version_name }}
-          files: |
-            ${{ steps.prepare_assets.outputs.asset_dir }}/*
-          token: ${{ secrets.TARGET_REPO_PAT }}
-          tag_name: ${{ needs.preflight.outputs.xposed_tag }}
-          draft: false
-          prerelease: false
-          make_latest: true
-          fail_on_unmatched_files: true
-          generate_release_notes: false
-          body_path: ${{ steps.release_notes.outputs.body_path }}
-
-  skip:
-    needs: preflight
-    if: needs.preflight.outputs.ready != 'true'
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-
-    steps:
-      - name: Report Skip Reason
-        shell: bash
-        run: |
-          set -euo pipefail
-          echo "Release workflow skipped: ${{ needs.preflight.outputs.reason }}"
-          {
-            echo "## Release Skipped"
-            echo
-            echo "- 原因: ${{ needs.preflight.outputs.reason }}"
-          } >> "$GITHUB_STEP_SUMMARY"
+                echo "<p>${contributor_html
