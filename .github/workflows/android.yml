@@ -66,14 +66,15 @@ jobs:
           sudo timedatectl set-timezone Asia/Shanghai
           echo "Current time: $(date)"
 
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-        fetch-depth: 0
-        ref: ${{ github.ref }}
-        persist-credentials: true
-        token: ${{ secrets.GITHUB_TOKEN }}
-        submodules: true # 拉取所有子模块，避免依赖缺失
+   - name: Checkout
+  uses: actions/checkout@v4
+  with:
+    fetch-depth: 0
+    ref: ${{ github.ref }}
+    persist-credentials: true
+    token: ${{ secrets.GITHUB_TOKEN }}
+    submodules: true # 拉取所有子模块，避免依赖缺失
+
 
 
       - name: Validate Project Toolchain Baseline
